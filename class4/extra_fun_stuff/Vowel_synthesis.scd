@@ -10,13 +10,26 @@ a.source = { };
 (
 a.source=
 { var v = Vowel.compose(
-    [\a, \e, \i, \o],
-    [\soprano, \bass, \tenor, \alto],
-    ({10.rand}!5).normalizeSum
+	[\a, \e, \i, \o],
+	[\soprano, \bass, \tenor, \alto],
+	({10.rand}!5).normalizeSum
 );
 Formants.ar(50 + 300.rand, v) * 0.1;
 }
 )
+
+a[0..3] = { var v = Vowel.compose(
+    [\a, \e, \i, \o],
+    [\soprano, \bass, \tenor, \alto],
+    ({10.rand}!5).normalizeSum
+);
+Formants.ar(60.midicps + 24.rand, v) * 0.1;
+}
+
+
+a[0..12] = {nil}
+
+(
 
 (
 a.source =
@@ -49,7 +62,7 @@ a.source =
 
 	amps = amps.normalizeSum; // tame amplitudes
 
-	DynKlang.ar(`[freqs, amps , nil] ) * 0.1 ;
+	DynKlang.ar(`[freqs, amps , n=il] ) * 0.1 ;
 }
 )
 

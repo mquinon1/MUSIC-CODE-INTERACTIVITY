@@ -6,10 +6,16 @@ s.boot;
 ~b2 = Buffer.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class4/daxos/dax_MULTIPHONIC.wav");
 ~b3 = Buffer.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class4/daxos/coldSHOLD_1.wav");
 )
+//just drag and drop!
 
-~b0.play;
-~b0.free;
-~b0.zero;
+~b0.play; // plays a buffer
+
+~b0.zero; //clears the content of the buffer without removing the buffer
+~b0.read("/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class4/daxos/bouncy.wav")
+//add a new file into the buffer
+
+~b0.free; //
+
 
 
 //frames

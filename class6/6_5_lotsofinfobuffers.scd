@@ -11,7 +11,7 @@ At minimum, read expects two arguments. The first argument is the server onto wh
 
 The 2nd argument is a String that represents the path of your sound file. On my desktop, I've got a folder called sounds, which has a few sound files I'll use for this tutorial. And this is a good time to point out that your sound files should be in either aif or wav format. I'll load the file called car1, which sounds like this, and I happen to know that the path for this file is /Users/eli/Desktop/sounds/car1.aiff. Remember that a string is delineated by an enclosure of double quotes, and also make sure to use exact spelling and capitalization.
 
-~b0 = Buffer.read(s, "/Users/danielfishkin/gitprojects/CreativeMusicalCoding/highlights/dax_MULTIPHONIC.wav");
+~b0 = Buffer.read(s,"/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/daxchordCLUSTER.wav" );
 
 Ok, so let's stop here and run this line. In the post window, this is what you can expect to see if you've done everything correctly. If you misspell your path name, SuperCollider will let you know.
 
@@ -28,8 +28,8 @@ It's also important to know how clear and remove buffers, once you've created th
 
 We've cleared b0, but we haven't removed the allocated buffer from the server, so we can fill it with sound once again, using the read method on the allocated buffer, like this
 
-~b0.read("/Users/danielfishkin/gitprojects/CreativeMusicalCoding/highlights/dax_MULTIPHONIC.wav");
-~b0.play;
+~b1.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/daxHH_2.wav");
+~b1.play;
 
 If you want to remove a buffer from the server entirely, we use "free", just like with Synths and Groups.
 
@@ -41,7 +41,7 @@ Now this buffer's completely gone, so if we try to play it
 
 Or read a file into it
 
-~b0.read("/Users/danielfishkin/gitprojects/CreativeMusicalCoding/class4/daxos/daxCHORD.wav");
+~b1.read("/Users/danielfishkin/gitprojects/CreativeMusicalCoding/class4/daxos/daxCHORD.wav");
 
 We get an error message.
 
@@ -60,16 +60,16 @@ Instead of manually typing the path, you can drag and drop a soundfile into the 
 //LOAD UP SOME SOUNNDS
 
 ~b0 = Buffer.read(s, "/Users/danielfishkin/gitprojects/CreativeMusicalCoding/class4/daxos/dax_harmonic_SHOUT.wav");
+~b1 = Buffer.read(s,"/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/highlights/Short&Sweet.wav" )
+
+~b2 = Buffer.read(s,"/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/new_highlights/MBe_Oatmeal.wav" );
+~b2 = Buffer.read(s, "");
+~b3 = Buffer.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/new_highlights/LS_I 6-KettleBoiling.wav");
+
 ~b0.play;
-
-~b1 = Buffer.read(s, "/Users/danielfishkin/gitprojects/CreativeMusicalCoding/highlights/Short&Sweet.wav");
-~b2 = Buffer.read(s, "/Users/danielfishkin/gitprojects/CreativeMusicalCoding/highlights/Mixing1.wav");
-~b3 = Buffer.read(s, "/Users/danielfishkin/gitprojects/CreativeMusicalCoding/highlights/SW WK2 crickets from tara's window.wav" );
-
 ~b1.play;
-~b2.play;
-~b3.free;
 ~b3.play;
+~b3.release;
 
 Ok, cool, so now that we've got a few sound files loaded, let's talk about some fundamental attributes of buffers. First, every buffer has a certain number of frames, and this number corresponds to the length of the buffer. If you want to know the number of frames in a buffer, we just use the numFrames method.
 
@@ -144,7 +144,7 @@ And I'll start by creating an empty Array, which will be used to hold our buffer
 
 and I'm also going to use an instance of a class called PathName that acts as a reference to the folder of daxo sounds.
 
-~folder = PathName.new("/Users/danielfishkin/gitprojects/CreativeMusicalCoding/class4/daxos/");
+~folder = PathName.new("/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/");
 
 If you send the message "entries" to a PathName, it will return an Array of PathNames representing the soundfiles themselves.
 
@@ -197,6 +197,7 @@ SynthDef.new(\playbuf_test, {
 }).add;
 )
 
+
 But of course, this is a poor choice, because it means this SynthDef will only be able to play buffer b0. Much better is to declare a bufnum argument, and specify the bufnum when the Synth is created, like this.
 
 (
@@ -209,13 +210,12 @@ SynthDef.new(\playbuf_test, {
 }).add;
 )
 
-Synth.new(\playbuf_test, [\buf, ~b3.bufnum]);
+Synth.new(\playbuf_test, [\buf, ~daxos[8].bufnum]);
 
 Now we can use the same SynthDef to play different buffers:
 
 Synth.new(\playbuf_test, [\buf, ~b1.bufnum]);
-Synth.new(\playbuf_test, [\buf, ~b2.bufnum]);
-
+Synth.new(\playbuf_test, [\buf, ~daxos[3].bufnum]);
 
 (
 SynthDef.new(\daxobuffer, {
@@ -355,7 +355,7 @@ SynthDef.new(\playbuf_test, {
 }).add;
 )
 
-x = Synth.new(\playbuf_test, [\buf, ~b2.bufnum, \loop, 1]);
+x = Synth.new(\playbuf_test, [\buf, ~daxos[1], \loop, 1]);
 
 Loop can be changed while the Synth is playing, just like other arguments. If we set loop to zero, the Synth will evaluate its doneAction as soon as PlayBuf reaches the end of the buffer.
 
@@ -389,19 +389,21 @@ so there's the equal tempered ratio for a fifth, and so on.
 
 So with midiratio, it becomes very easy to transpose your sounds by semitones.
 
-Synth.new(\playbuf_test, [\buf, ~daxo[3].bufnum, \rate, -7.midiratio]);
-Synth.new(\playbuf_test, [\buf, ~daxo[3].bufnum, \rate, -10.midiratio]);
-Synth.new(\playbuf_test, [\buf, ~daxo[3].bufnum, \rate, -13.midiratio]);
-Synth.new(\playbuf_test, [\buf, ~daxo[3].bufnum, \rate, -15.midiratio]);
+Synth.new(\playbuf_test, [\buf, ~daxos[3].bufnum, \rate, -7.midiratio]);
+Synth.new(\playbuf_test, [\buf, ~daxos[3].bufnum, \rate, -10.midiratio]);
+Synth.new(\playbuf_test, [\buf, ~daxos[3].bufnum, \rate, -13.midiratio]);
+Synth.new(\playbuf_test, [\buf, ~daxos[3].bufnum, \rate, -15.midiratio]);
 
 So that's essentially how PlayBuf works. Here's a quick example that's a little more interesting and a little less clinical. I'll first create a Group, and put three Synths into it, each with a different buffer and different playback rate, and I'll loop them.
+
+x.set(\loop, 1);
 
 g = Group.new;
 
 (
-x = Synth.new(\playbuf_test, [\buf, ~daxo[2].bufnum, \rate, 1.5, \loop, 1, \amp, 0.5], g);
-y = Synth.new(\playbuf_test, [\buf, ~daxo[2].bufnum, \rate, 1.2, \loop, 1, \amp, 0.5], g);
-z = Synth.new(\playbuf_test, [\buf, ~daxo[2].bufnum, \rate, 2.1, \loop, 1, \amp, 0.5], g);
+x = Synth.new(\playbuf_test, [\buf, ~daxos[2].bufnum, \rate, 1.5, \loop, 1, \amp, 0.5], g);
+y = Synth.new(\playbuf_test, [\buf, ~daxos[2].bufnum, \rate, 1.2, \loop, 1, \amp, 0.5], g);
+z = Synth.new(\playbuf_test, [\buf, ~daxos[2].bufnum, \rate, 2.1, \loop, 1, \amp, 0.5], g);
 )
 
 I can change the rate of each of these by sending a message to the enclosing group:
@@ -411,7 +413,7 @@ g.set(\rate, 0.5);
 
 I can set all three synths to play the same buffer,
 
-g.set(\buf, ~b3_part1.bufnum);
+g.set(\buf, ~daxos[14].bufnum);
 
 And I can send messages individually. Here I'll randomize the rates so they all fall out of phase with each other.
 
@@ -427,6 +429,7 @@ Cool, ok let's now turn our attention to BufRd. BufRd starts with the same two a
 
 Suppose we just want to read through this buffer once. The simplest way to do this is to use Line, which goes from point A to point B over a given duration. Remember that the read pointer for BufRd must run at the audio rate, so I'm choosing dot ar. We want to start at the zeroth frame, and travel to the last frame. This is a good opportunity to revisit the Buffer Info UGens. Here we can use BufFrames, making sure to subtract 1, and then for the duration argument, we can use BufDur, to ensure that the Line takes the correct amount of time to travel from start to finish. And for good measure, I'll specify doneAction:2 on the Line so that the Synth will free itself at the end.
 
+
 (
 SynthDef.new(\bufrd_test, {
 	arg amp=1, out=0, buf;
@@ -438,25 +441,7 @@ SynthDef.new(\bufrd_test, {
 }).add;
 )
 
-Synth.new(\bufrd_test, [\buf, ~daxo[1].bufnum]);
-
-Maybe we want some flexibility in where Line starts and ends. So, I'll declare some arguments.
-
-(
-SynthDef.new(\bufrd_test, {
-	arg amp=1, out=0, buf, start, end;
-	var sig, ptr;
-	ptr = Line.ar(start, end, BufDur.kr(buf), doneAction:2);
-	sig = BufRd.ar(2, buf, ptr);
-	sig = sig * amp;
-	Out.ar(out, sig);
-}).add;
-)
-
-Now we can play the file forward, or backward
-
-Synth.new(\bufrd_test, [\buf, ~b2.bufnum, \start, 0, \end, ~b2.numFrames-1]);
-Synth.new(\bufrd_test, [\buf, ~b2.bufnum, \start, ~b2.numFrames-1, \end, 0]);
+Synth.new(\bufrd_test, [\buf, ~b2.bufnum]);
 
 To loop a buffer, we'll need to choose a UGen other than Line, because Line isn't capable of looping. Phasor is usually an excellent choice for this, because it's a linear ramp oscillator with inputs for start, end, and rate.
 
@@ -505,7 +490,7 @@ SynthDef.new(\bufrd_sine, {
 }).add;
 )
 
-x = Synth.new(\bufrd_sine, [\buf, ~daxo[2].bufnum, \start, 0, \end, ~b2.numFrames-1, \freq, 0.2]);
+x = Synth.new(\bufrd_sine, [\buf, ~b2.bufnum, \start, 0, \end, ~b2.numFrames-1, \freq, 0.2]);
 x.free;
 
 One of my personal favorites, you can use a noise generator as a buffer playback pointer. Using a low frequency noise generator, you'll hear random sections of the soundfile, at random speeds, sometimes forward, sometimes backward.
@@ -522,6 +507,9 @@ SynthDef.new(\bufrd_noise, {
 )
 
 x = Synth.new(\bufrd_noise, [\buf, ~b2.bufnum, \start, 0, \end, ~b2.numFrames-1]);
+
+x = Synth.new(\bufrd_noise, [\buf, ~b2.bufnum, \start, 0, \end, ~b2.numFrames-1]);
+
 x.free;
 
 With multiple Synths, each playing a different sound, you can get some interesting layered effects.

@@ -67,10 +67,10 @@ Here is a simple example:
 	"4 mississippi".postln; 1 .wait;
 })
 
+~np[0].play
 
 
-// Test the function
-~np[0].value(5).play;
+
 
 ~np[1] =  Task({ var buf, rate, amp;
 	 buf =  ~buffers.choose;
