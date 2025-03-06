@@ -22,14 +22,14 @@ int main()
 	unsigned char note_count = 4;                 // Number of active notes
 	unsigned char val = 0;                        // Output value (high/low)
 	unsigned char note_on = 1;                    // Note playing state
-	unsigned long beat = 2000;                    // Base beat duration
-	unsigned char multiplier = 3;                 // Note frequency multiplier
+	unsigned long beat = 8000;                    // Base beat duration
+	unsigned char multiplier = 4;                 // Note frequency multiplier
 	unsigned char beats[32];                      // Array for beat durations
 	unsigned long original = 2000;                // Base frequency
 	
 	for (note = 0; note < 32; note++)
 	{
-		notes[note] = ((Random() % 5) + 1) * 3; 
+		notes[note] = ((Random() % 6) + 1) * 5; 
 		beats[note] = (Random() % 2) + 1;
 	}
 	// fill up the table with repeated notes and beat durations

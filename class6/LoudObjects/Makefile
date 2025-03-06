@@ -15,10 +15,8 @@ PROJECT=${project}
 FILE_NAME=$(PROJECT)
 HEX_PATH=$(FILE_NAME).hex
 
-# Programmer. you need to specify the programming port manually.
-PROGRAMMER=avrisp
-PROGRAMMER_PORT=/dev/cu.usbmodem14101
-PROGRAMMER_BAUD=19200
+# Programmer - USBtiny
+PROGRAMMER=usbtiny
 
 # Tools
 CC=avr-gcc
@@ -38,10 +36,16 @@ $(PROJECT).hex: $(PROJECT).out
 # "out" target: compiles .c to .out
 $(PROJECT).out: $(SOURCES)
 	$(CC) $(CFLAGS) -I./ -Os -o $(PROJECT).out $(SOURCES)
+
 # "program" target: programs .hex onto the chip
 program: $(PROJECT).hex
-	$(AVRDUDE) -v -p $(PROCESSOR) -c $(PROGRAMMER) -P $(PROGRAMMER_PORT) -b $(PROGRAMMER_BAUD) -U flash:w:$(HEX_PATH):i -U lfuse:w:$(LOW_FUSE):m -U hfuse:w:$(HIGH_FUSE):m
+	$(AVRDUDE) -v -p $(PROCESSOR) -c $(PROGRAMMER) -U flash:w:$(HEX_PATH):i -U lfuse:w:$(LOW_FUSE):m -U hfuse:w:$(HIGH_FUSE):m
+
 # "clean" target: removes .out and .hex files
 clean:
 	rm -f $(PROJECT).out
 	rm -f $(PROJECT).hex
+
+# "verify" target: check if programmer is connected
+verify:
+	$(AVRDUDE) -v -p $(PROCESSOR) -c $(PROGRAMMER) -n

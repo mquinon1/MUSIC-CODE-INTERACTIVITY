@@ -23,9 +23,11 @@ Buffer.freeAll;//completely empty all buffers on server
 ~b1 = Buffer.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/mewl.wav");
 ~b2 = Buffer.read(s,"/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/daxSHIVEr.wav" );
 ~b3 = Buffer.read(s, "/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/class6/daxos/TINGLYdaxCHORD_1.wav" );
+~b0.play;
 ~b1.play;
 ~b2.play
 ~b3.play;
+
 
 //And I'll start by creating an empty Array, which will be used to hold our buffers:
 ~daxo = Array.new;
@@ -75,6 +77,7 @@ Synth.new(\bufrd_test, [\buf, ~b2.bufnum, \start, ~b2.numFrames-1, \end, 0]);
 SynthDef.new(\bufrd_loop, {
 	arg amp=1, out=0, buf, rate=1, start, end;
 	var sig, ptr;
+//	rate = MouseX.kr(0.1, 10.0, 2.0);
 	ptr = Phasor.ar(0, BufRateScale.kr(buf) * rate, start, end);
 	sig = BufRd.ar(2, buf, ptr);
 	sig = sig * amp;
@@ -108,6 +111,7 @@ But BufRd is even more flexible, because you can use ANY audio rate UGen as a fr
 SynthDef.new(\bufrd_sine, {
 	arg amp=1, out=[0,1], buf, freq=0.2, start, end;
 	var sig, ptr;
+//	freq = MouseX.kr(0.1, 10.0, 2.0);
 	ptr = SinOsc.ar(freq, 3pi/2).range(start, end);
 	sig = BufRd.ar(2, buf, ptr);
 	sig = sig * amp;
@@ -173,16 +177,20 @@ h.source=nil
     sig = BufRd.ar(2, buf, ptr);
     sig = sig * amp;
 	};
-h.set(\buf, ~b0, \start, 0, \end, ~b2.numFrames-1)
+h.set(\buf, ~b0, \start, 0, \end, ~b0.numFrames-1)
 )
 
-h.set(\buf, ~b0, \start, 0, \end, ~b2.numFrames-1)
+h.set(\buf, ~b1, \start, 0, \end, ~b1.numFrames-1)
+
+h.set(\buf, ~b2, \start, 0, \end, ~b2.numFrames-1)
 
 ~b0.zero
 ~b0.read("/Users/danielfishkin/gitprojects/MUSIC-CODE-INTERACTIVITY/new_highlights/niceCHORDS.wav");
-change the sound!
+//change the sound!
 
 h.gui
+
+
 // Create the Ndef version of bufrd_noise
 Ndef(\bufrd_noise,
 	{
