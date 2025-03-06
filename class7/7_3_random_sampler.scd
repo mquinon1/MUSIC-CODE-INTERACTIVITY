@@ -1,9 +1,9 @@
 //first, run this, it sets up the directory inside whatever this file is saved inside.
 (
-//~dirpath = "MySounds/*".resolveRelative; //when you load up a folder, you gotta have the slash after it!
-~dirpath = "piano and accordian/*".resolveRelative; //this folder also sounds good for these examples.
+~dirpath = "MySounds/*".resolveRelative; //when you load up a folder, you gotta have the slash after it!
+//~dirpath = "piano and accordian/*".resolveRelative; //this folder also sounds good for these examples.
 ~filepaths = ~dirpath.pathMatch;
-~buffers = ~filepaths.collect { |path|  Buffer.read(s, path) };
+//~buffers = ~filepaths.collect { |path|  Buffer.read(s, path) };
 ~buffers = ~filepaths.collect { |path|  Buffer.readChannel(s, path, channels: [0]);};
 
 s.options.maxSynthDefs = 2048;  // Default is 1024, doubling number of synthdefs so we can not overrun the server.
@@ -15,7 +15,7 @@ s.boot;
 s.waitForBoot({
   ~np = NodeProxy.audio(s, 2);
   // Set some audio content before playing
-  ~np.source = { nil };
+  ~np.source = nil;
   // Now play it
   ~np.play;
 });
@@ -35,7 +35,7 @@ s.waitForBoot({
                 Rand(-1.0, 1.0)
             )
         });
-        (buf.duration/4).wait;
+        (buf.duration/2).wait;
     };
 };
 
@@ -82,7 +82,7 @@ s.waitForBoot({
         "Playing SLENDRO section...".postln;
 	~slendro = Tuning.new(Tuning.calcET(5));
         100.do { |i|
-            var buf = ~buffers.choose;
+		var buf = ~buffers.at(0);
             var start = rrand(0, 0.8);
 			var tuningIndex = (0..~slendro.ratios.size-1).choose;  // Choose a random index from the 5-ET tuning
 			var rate = ~slendro.ratios[tuningIndex];  // Use the ratio from your 5-ET tuning
@@ -109,20 +109,20 @@ s.waitForBoot({
         "Starting cycle %...".format(cycle + 1).postln;
 
 		   // Play slow section
-		~slendroglitchy.value;
-		~np.source = { nil };
+	//	~slendroglitchy.value;
+		//~np.source = nil ;
 
         // Play slow section
-		~slow.value;
-		~np.source = { nil };
+	~slow.value;
+		//~np.source = nil;
 
 		// Play glitchy section
-        ~glitchy.value;
-		~np.source = { nil };
+     //   ~glitchy.value;
+		//~np.source = nil;
 
         // Play fast section
-        ~fast.value;
-		~np.source = { nil };
+//        ~fast.value;
+	//	~np.source = nil;
 
         "Completed cycle %".format(cycle + 1).postln;
     };
@@ -140,7 +140,6 @@ s.waitForBoot({
 //In SuperCollider, when you use .value on a variable that contains a function, you're saying "read whatever function is stored in this variable, and execute it now."
 ~start.value
 ~stop.value
-
 
 
 
