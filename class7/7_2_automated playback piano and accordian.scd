@@ -2,8 +2,8 @@
 
 // Let's get some other sound files into buffers
 (
-//~dirpath = "MySounds/*".resolveRelative; //when you load up a folder, you gotta have the slash after it!
-~dirpath = "piano and accordian/*".resolveRelative; //this folder also sounds good for these examples.
+~dirpath = "MySounds/*".resolveRelative; //when you load up a folder, you gotta have the slash after it!
+//~dirpath = "piano and accordian/*".resolveRelative; //this folder also sounds good for these examples.
 ~filepaths = ~dirpath.pathMatch;
 ~buffers = ~filepaths.collect { |path|  Buffer.read(s, path) };
 ~buffers = ~filepaths.collect { |path|  Buffer.readChannel(s, path, channels: [0]);};
@@ -19,6 +19,7 @@ s.waitForBoot({
   // Now play it
   ~np.play;
 });
+
 )
 
 /*
@@ -32,8 +33,8 @@ you can take it out if you need to, or you can modify the structure for stereo.
 
 
 
-(~np[0] = {
-	var buf = ~buffers.choose;
+ (~np[0] = {
+	var buf = ~buffers.at(20);
 	var rate=1;
 	var sig;
 	Pan2.ar
@@ -52,7 +53,7 @@ you can take it out if you need to, or you can modify the structure for stereo.
 (~np[0..10] =
 { | lofreq=1|
     var trig = Dust.ar(lofreq);  // Random trigger w controllable argument
-    var buf = ~buffers.choose;
+	var buf = ~buffers.at(4);
 	var notes = (1..12).asArray;
     // Use the trigger to start the sample playback
     Pan2.ar(
@@ -61,7 +62,7 @@ you can take it out if you need to, or you can modify the structure for stereo.
             buf.bufnum,
 			rate: notes.midiratio.choose,
             trigger: trig,  // Retrigger the sample on each Dust impulse
-            doneAction: 0   // Don't free the synth when sample finishes
+            doneAction:0   // Don't free the synth when sample finishes
         ),
         Rand(-1.0, 1.0)     // This will only randomize once when the synth starts
     );
@@ -88,7 +89,7 @@ you can take it out if you need to, or you can modify the structure for stereo.
 	var rate = (0..24).choose.midiratio; // you can change the width of the array to easily expand octaves
 	var amp = rrand(-40, 0).dbamp; //added a feature for random dynamics. very important—we don't want everyting to be at the same volume.
 			Pan2.ar(
-				PlayBuf.ar(buf.numChannels,buf.bufnum, rate: rate, doneAction: 2) * amp,
+				PlayBuf.ar(buf.numChannels,buf.bufnum, rate: rate*octave, doneAction: 2) * amp,
 				Rand(-1.0, 1.0)
 			)
 		};
@@ -124,7 +125,7 @@ you can take it out if you need to, or you can modify the structure for stereo.
 	var buf = ~buffers.at(5); //just pick a particular note
 	var tuningIndex = (0..~slendro.ratios.size-1).choose;  // Choose a random index from the 5-ET tuning
 	var rate = ~slendro.ratios[tuningIndex];  // Use the ratio from your 5-ET tuning
-	var amp = rrand(-40, 0).dbamp; //random dynamics
+	var amp = rrand(-20, 0).dbamp; //random dynamics
 	Pan2.ar(
 		PlayBuf.ar(buf.numChannels, buf.bufnum, rate: rate, doneAction: 2) * amp,
 		Rand(-1.0, 1.0)
@@ -199,17 +200,18 @@ wait the appropriate amount of time and rerun it.
 Here is a simple example:
 
 ~np[0] = Task({
-	"1 mississippi".postln; 2 .wait;
+	"1 mississippi".postln; 1 .wait;
 	"2 mississippi".postln; 1 .wait;
 	"3 mississippi".postln; 1 .wait;
 	"4 mississippi".postln; 1 .wait;
 })
 
 
-~np[1] =  Task({ var buf, rate, amp, wat;
+~np[1] =  Task(
+	{ var buf, rate, amp, wat;
 	 buf =  ~buffers.choose;
 	 rate = (0..12).choose.midiratio;
-	 amp = 0.1;
+	 amp = 0.8;
 	~np[0] = {
 			Pan2.ar(
 				PlayBuf.ar(buf.numChannels,buf.bufnum, rate: rate,  doneAction: 2) * amp,
@@ -247,7 +249,7 @@ Here is a simple example:
 });
 //now this sample player plays infinitely.
 
-~np[1]={nil}
+~np[1]=nil
 
 //let's just tweak it so we can control density.
 
@@ -270,7 +272,7 @@ Here is a simple example:
 });
 )
 //using global variable like ~waitTime.wait means you can change it dynamically.
-~waitTime=0.1;
+~waitTime=0.3;
 
 ~np[1]=nil
 

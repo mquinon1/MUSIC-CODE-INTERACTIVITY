@@ -32,7 +32,7 @@ s.waitForBoot({
                 PlayBuf.ar(buf.numChannels, buf.bufnum,
                     rate: (1..12).choose.midiratio,
                     doneAction: 2) * rrand(-40, 0).dbamp,
-                Rand(-1.0, 1.0)
+                Rand(-2.0, 3.0)
             )
         });
         (buf.duration/2).wait;
@@ -109,19 +109,19 @@ s.waitForBoot({
         "Starting cycle %...".format(cycle + 1).postln;
 
 		   // Play slow section
-	//	~slendroglitchy.value;
+	~slendroglitchy.value;
 		//~np.source = nil ;
 
         // Play slow section
-	~slow.value;
+	//~slow.value;
 		//~np.source = nil;
 
 		// Play glitchy section
-     //   ~glitchy.value;
+	// ~glitchy.value;
 		//~np.source = nil;
 
         // Play fast section
-//        ~fast.value;
+   ~fast.value;
 	//	~np.source = nil;
 
         "Completed cycle %".format(cycle + 1).postln;
