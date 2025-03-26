@@ -151,6 +151,36 @@ s.waitForBoot({
     }
 ;
 
+~slendroglitchy={
+    var totalEvents = 100;
+	"Starting slendroglitchy section (%/% events)...".format(totalEvents, totalEvents).postln;
+	~waitTime = 0.1;
+	~slendro = Tuning.new(Tuning.calcET(5));
+        totalEvents.do { |i|
+		var eventsLeft = totalEvents - i;
+		var buf = ~buffers.at(0);
+            var start = rrand(0, 0.8);
+			var tuningIndex = (0..~slendro.ratios.size-1).choose;  // Choose a random index from the 5-ET tuning
+			var rate = ~slendro.ratios[tuningIndex];  // Use the ratio from your 5-ET tuning
+		    var octaverate = [-2, -1, 1, 2, 4].choose; //negative rates play backward. may result in some frames dropped. see earlier example for hack to fix
+			var amp = rrand(-40, 0).dbamp; //random dynamics
+            ~np.add({
+                Pan2.ar(
+                    PlayBuf.ar(buf.numChannels, buf.bufnum,
+                        rate: rate,
+                        startPos: start * buf.numFrames,
+                        doneAction: 2) * amp,
+                    Rand(-1.0, 1.0)
+                )
+            });
+		   "slendro section: % events remaining".format(eventsLeft).postln;
+        rrand(0.1, 0.4)*~waitTime.wait;
+        };
+        "SLENDROglitchy section complete.".postln;
+    };
+
+
+
 ~solo = {
     var totalEvents = 100;
     var eventsLeft, buf, ping;  // Declare all variables at the beginning
@@ -181,6 +211,8 @@ s.waitForBoot({
 
 
 
+
+
 // Create the looping task
 ~loopingTask = Task({
     inf.do { |cycle|
@@ -195,10 +227,14 @@ s.waitForBoot({
       //  ~slow.value;
 
         // Play fast section
-       // ~fast.value;
+        //~fast.value;
 
-		~solo.value;
+		//~solo.value;
 		//play the SOLO section
+
+		~slendroglitchy.value;
+		//play the SLENDRO section
+
 		~checkAndClearServer.value;
     };
 });
