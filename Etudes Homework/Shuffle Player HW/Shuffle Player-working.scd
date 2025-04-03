@@ -1,7 +1,7 @@
 (
 ~dirpath = "MySounds/*".resolveRelative;
 ~filepaths = ~dirpath.pathMatch;
-~buffers = ~filepaths.collect { |path|  Buffer.read(s, path) };
+//~buffers = ~filepaths.collect { |path|  Buffer.read(s, path) };
 ~buffers = ~filepaths.collect { |path|  Buffer.readChannel(s, path, channels: [0]);};
 ~waitTime=0.1;
 
@@ -15,6 +15,7 @@ s.waitForBoot({
 
 
 ~checkAndClearServer = {
+    // Check if we're getting close to the SynthDef limit
     var defCount = s.numSynthDefs;
     var maxDefs = s.options.maxSynthDefs;
 
@@ -29,6 +30,26 @@ s.waitForBoot({
     };
 };
 
+
+~fastnew = {
+    "Playing modulated speedy section...".postln;
+    200.do {
+        var buf = ~buffers.choose;
+     //   var modRate = SinOsc.kr(rrand(0.1, 1)).range(0.5, 1.5); // Slow modulation
+
+        ~np.add({
+            Pan2.ar(
+                PlayBuf.ar(buf.numChannels, buf.bufnum,
+                    rate: (3..9).choose.midiratio,
+                    doneAction: 2
+                ) * rrand(-70, 0).dbamp,
+                Rand(-1.0, 1.0)
+            )
+        });
+
+        rrand(0.05, 0.3).wait;
+    };
+};
 
 
 ~slownew = { |rateMin = 1, rateMax = 10|
@@ -46,48 +67,32 @@ s.waitForBoot({
     };
 };
 
-~fastnew = {
-    "Playing modulated speedy section...".postln;
-    200.do {
-        var buf = ~buffers.choose;
-        var modRate = SinOsc.kr(rrand(0.1, 1)).range(0.5, 1.5); // Slow modulation
-
-        ~np.add({
-            Pan2.ar(
-                PlayBuf.ar(buf.numChannels, buf.bufnum,
-                    rate: modRate *(3..9).choose.midiratio,
-                    doneAction: 2
-                ) * rrand(-70, 0).dbamp,
-                Rand(-1.0, 1.0)
-            )
-        });
-
-        rrand(0.05, 0.3).wait;
-    };
-};
-
-
 
 // Create the looping task
 ~loopingTask = Task({
     inf.do { |cycle|
         "Starting cycle %...".format(cycle + 1).postln;
 
-		// Play fast section
-        ~fast.value;
 
-		// Play slow section
-		~slow.value;
+        // Play slow section
+	//	~slow.value;
+		//~slownew.value;
+		~checkAndClearServer.value;
+
+        // Play slow section
+		~fastnew.value;
+        ~checkAndClearServer.value;
 
         "Completed cycle %".format(cycle + 1).postln;
     };
 });
 
 
+// Simple controls
 ~start = { ~loopingTask.play; "Starting the loop...".postln; };
 ~stop = { ~loopingTask.stop; "Stopping the loop...".postln; };
 )
-
+// Show instructions
 "SIMPLE CONTROLS:".postln;
 "~start.value - Start the loop".postln;
 "~stop.value - Stop the loop".postln;
