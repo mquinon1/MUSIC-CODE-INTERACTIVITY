@@ -11,6 +11,8 @@
 //s.options.maxSynthDefs = 2048;  // Default is often 1024
 s.boot;
 
+
+
 // Wait until server is ready, then create and use the NodeProxy
 s.waitForBoot({
   ~np = NodeProxy.audio(s, 2);
@@ -217,8 +219,9 @@ s.waitForBoot({
 ~loopingTask = Task({
     inf.do { |cycle|
 
-		 //Play newGlitchy section
-	//	~newglitchy.value;
+	 //Play newGlitchy section
+		~newglitchy.value;
+		~checkAndClearServer.value;
 
 		//play Glitchy section
 	//	~glitchy.value;
@@ -229,11 +232,11 @@ s.waitForBoot({
         // Play fast section
         //~fast.value;
 
-		//~solo.value;
 		//play the SOLO section
+		//~solo.value;
 
-		~slendroglitchy.value;
 		//play the SLENDRO section
+		~slendroglitchy.value;
 
 		~checkAndClearServer.value;
     };
